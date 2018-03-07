@@ -7,7 +7,7 @@ using namespace std;
 int main(void)
 {
     int men = 0, temp = 0;
-    cout << "Ingrese el No.1     "; //Se hace el primer número aparte para asegurar que el número menor sea uno ingresado por el usuario (Si se hace en el ciclo, el menor puede ser 0 si se ingresan solo números mayores)
+    cout << "Ingrese el No.1     "; //Se hace el primer número aparte para asegurar que el número menor sea uno ingresado por el usuario (Si se hace en el ciclo, el menor puede ser 0 si se ingresan solo números mayores, así el 0 no se ingrese)
     cin >> men;
     for(int ii = 2; ii <= 10; ii++){
         cout << "Ingrese el No." << ii << "     ";
