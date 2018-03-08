@@ -14,7 +14,6 @@ int main(void)
     cin >> b;
     if(b != 0){
         c = (((double)a)/b); //typecasting de la división a double
-        cout << "c = " << c << endl;
         //¿Existe c entero tal que a = c*b? => a/b = c; c debe ser entero
         if(c == floor(c)){ //Si es entero, es igual a su parte entera
             cout << a << " SÍ es múltiplo de " << b << endl;
