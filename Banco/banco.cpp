@@ -9,10 +9,10 @@ void impr_menu(){ //Se imprime el menú del banco
     cout << "| Bienvenido a su banco                   |" << endl;
     cout << "|*****************************************|" << endl;
     cout << "| Ingrese una de las siguientes opciones: |" << endl;
-    cout << "| S - consultar saldo                     |" << endl;
-    cout << "| D - depositar dinero                    |" << endl;
-    cout << "| R - retirar dinero                      |" << endl;
-    cout << "| Q - salir                               |" << endl;
+    cout << "| S - Consultar saldo                     |" << endl;
+    cout << "| D - Depositar                           |" << endl;
+    cout << "| R - Retirar                             |" << endl;
+    cout << "| Q - Salir                               |" << endl;
     cout << "|-----------------------------------------|" << endl;
 }
 
@@ -46,7 +46,7 @@ bool get_function(char opcion_elegida){
         cambio = true;
         break;
     case 'D':
-        cout << "Ha escogido la opción DEPOSITAR DINERO" << endl;
+        cout << "Ha escogido la opción DEPOSITAR" << endl;
         cout << "¿Cuánto dinero desea depositar?" << endl;
         cin >> dinero_a_mover;
         cout << "Se han depositado " << dinero_a_mover << " pesos a su cuenta. Su nuevo saldo es ";
