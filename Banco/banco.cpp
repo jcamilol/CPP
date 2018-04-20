@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -13,6 +14,8 @@ void impr_menu(){ //Se imprime el menú del banco
     cout << "| D - Depositar                           |" << endl;
     cout << "| R - Retirar                             |" << endl;
     cout << "| Q - Salir                               |" << endl;
+    cout << "|                                         |" << endl;
+    cout << "| C - Cambiar clave                       |" << endl;
     cout << "|-----------------------------------------|" << endl;
 }
 
@@ -22,9 +25,14 @@ double consultar_saldo(istream& in_file){ //El archivo desde el que lee es "sald
     return saldo;
 }
 
-ostream& mover_dinero(ostream& out_file, double nuevo_saldo){ //El archivo al que escribe es "saldo.txt = OUt_file"
-    out_file << nuevo_saldo;
+ostream& mover_dinero(ostream& out_file, double nuevo_saldo){ //El archivo al que escribe es "saldo.txt = out_file"
+    out_file << fixed << setprecision(4) << nuevo_saldo;
     return out_file;
+}
+
+ostream& cambiar_clave(ostream& clave_out_file, int nueva_clave){
+    clave_out_file << nueva_clave;
+    return clave_out_file;
 }
 
 bool get_function(char opcion_elegida){
@@ -40,60 +48,153 @@ bool get_function(char opcion_elegida){
     double dinero_a_mover = 0;
 
     switch(opcion_elegida){
-    case 'S':
-        cout << "Ha escogido la opción CONSULTAR SALDO" << endl;
-        cout << "Su saldo es ";
-        cambio = true;
-        break;
-    case 'D':
-        cout << "Ha escogido la opción DEPOSITAR" << endl;
-        cout << "¿Cuánto dinero desea depositar?" << endl;
-        cin >> dinero_a_mover;
-        cout << "Se han depositado " << dinero_a_mover << " pesos a su cuenta. Su nuevo saldo es ";
-        cambio = true;
-        break;
-    case 'R':
-        cout << "Ha escogido la opción RETIRAR DINERO" << endl;
-        cout << "¿Cuánto dinero desea retirar?" << endl;
-        cin >> dinero_a_mover;
-        if(dinero_a_mover <= saldo){
-            cout << "Se han retirado " << dinero_a_mover << " pesos a su cuenta. Su nuevo saldo es ";
-            dinero_a_mover = -dinero_a_mover; //Se cambia el signo para restar
+
+        case 's':
+        case 'S':{
+            cout << "Ha escogido la opcion CONSULTAR SALDO" << endl;
+            cout << "Su saldo es ";
             cambio = true;
+
+            break;
         }
-        else{
-            cout << "Usted no posee los fondos suficientes" << endl;
+
+        case 'd':
+        case 'D':{
+            cout << "Ha escogido la opcion DEPOSITAR" << endl;
+            cout << "Cuanto dinero desea depositar?" << endl;
+            cin >> dinero_a_mover;
+            cout << "Se han depositado " << dinero_a_mover << " pesos a su cuenta. Su nuevo saldo es ";
+            cambio = true;
+
+            break;
+        }
+
+        case 'r':
+        case 'R':{
+            cout << "Ha escogido la opción RETIRAR DINERO" << endl;
+            cout << "Cuánto dinero desea retirar?" << endl;
+            cin >> dinero_a_mover;
+            if(dinero_a_mover <= saldo){
+                cout << "Se han retirado " << dinero_a_mover << " pesos a su cuenta. Su nuevo saldo es ";
+                dinero_a_mover = -dinero_a_mover; //Se cambia el signo para restar
+                cambio = true;
+            }
+            else{
+                cout << "Usted no posee los fondos suficientes" << endl;
+                cambio = false;
+            }
+
+            break;
+        }
+
+        case 'q':
+        case 'Q':{
+            cout << "Ha escogido la opcion SALIR\nHasta luego\n" << endl;
+            salir = true;
             cambio = false;
+
+            break;
         }
-        break;
-    case 'Q':
-        cout << "Ha escogido la opción SALIR" << endl;
-        salir = true;
-        cambio = false;
-        break;
-    default:
-        cout << "Opción incorrecta" << endl;
-        cambio = false;
+
+        case 'c':
+        case 'C':{
+            cout << "Ha escogido la opcion CAMBIAR CLAVE" << endl;
+            cout << "Ingrese su nueva clave (Número de 4 dígitos: [1000,9999])" << endl;
+            int nueva_clave;
+            cin >> nueva_clave;
+            if(nueva_clave < 1000 || nueva_clave > 9999){
+                cout << "CLAVE INVALIDA" << endl;
+            }
+            else{
+                ofstream clave_out_file("clave.txt");
+                cambiar_clave(clave_out_file, nueva_clave);
+                clave_out_file.close();
+                cout << "Su clave ha sido cambiada\n" << endl;
+            }
+
+            break;
+        }
+
+        default:{
+
+            cout << "Opcion incorrecta" << endl;
+            cambio = false;
+
+        }
     }
 
     double nuevo_saldo = saldo + dinero_a_mover;
 
-    if(cambio == true){
+    if(cambio == true){ //Si hubo cambios se imprime el nuevo saldo
 
         ofstream out_file("saldo.txt"); //Se cambia el saldo dependiendo cuanto dinero se mueve
         mover_dinero(out_file, nuevo_saldo);
         out_file.close();
 
-        ifstream inin_file("saldo.txt"); //Se lee el nuevo saldo
-        cout  << consultar_saldo(inin_file) << " pesos." << endl;
-        inin_file.close();
+        ifstream in_file("saldo.txt"); //Se lee el nuevo saldo
+        cout  << fixed << setprecision(4) << consultar_saldo(in_file) << " pesos.\n" << endl;
+        in_file.close();
 
     }
 
     return salir;
 }
 
+bool pedir_clave(int clave_correcta){
+    cout << "--------------------------------------------------------------------- " << endl;
+    cout << "| Bienvenido a su banco. Para ingresar digite su clave de 4 digitos |" << endl;
+    cout << "---------------------------------------------------------------------" << endl;
+    int clave_ingresada = 0;
+    cin >> clave_ingresada;
+    if(clave_ingresada == clave_correcta){
+        return true;
+    }
+    return false;
+}
+
+int get_clave(istream& clave_in_file){
+    int clave_correcta;
+    clave_in_file >> clave_correcta;
+    return clave_correcta;
+}
+
+void bloquear_sistema(){
+cout << " __________________________________________________________\n";
+cout << "/  ____  _     ___   ___  _   _ _____    _    ____   ___     \n";
+cout << "| | __ )| |   / _   / _  | | | | ____|  / |  |  _   / _    | \n";
+cout << "| |  _  | |  | | | | | | | | | |  _|   / _ | | | | | | | | | \n";
+cout << "| | |_) | |__| |_| | |_| | |_| | |___ / ___ || |_| | |_| | | \n";
+cout << "| |____/|_____ ___/  __ _ |___/|_____/_/    _|____/  ___/  | \n";
+cout << " ---------------------------------------------------------- \n";
+cout << "   ^__^\n";
+cout << "   (**) _______ \n";
+cout << "   (__)        ) /  \n";
+cout << "    U  ||----w | \n";
+cout << "       ||     || \n";
+
+}
+
 int main(){
+
+    ifstream clave_in_file("clave.txt");
+    int clave_correcta = get_clave(clave_in_file);
+    clave_in_file.close();
+
+    int intentos = 5;
+
+    while(pedir_clave(clave_correcta) == false){
+        intentos --;
+        if(intentos >= 1 && intentos <= 5){
+            cout << "CLAVE INCORRECTA. Por favor vuelva a intentar (" << intentos << " intentos restantes)" << endl << endl;
+        }
+        if(intentos == 0){
+            bloquear_sistema();
+            while(true){
+            }
+        }
+    }
+
+    cout << "Clave correcta\n" << endl;
 
     bool salir = false;
     do{
@@ -104,5 +205,6 @@ int main(){
     }
     while(salir == false);
 
+    system("PAUSE");
     return 0;
 }
